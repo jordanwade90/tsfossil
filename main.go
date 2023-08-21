@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"os"
@@ -58,10 +59,22 @@ func main() {
 					Args:   []string{"/bin/fossil", "http", "/museum/repo.fossil", "--jsmode", "bundled"},
 					Env:    []string{"PATH=/bin", fmt.Sprintf("REMOTE_USER=%s", who.UserProfile.LoginName)},
 					Stdin:  r,
-					Stdout: r,
 					Stderr: os.Stderr,
 				}
-				if err := cmd.Run(); err != nil {
+				stdout, err := cmd.StdoutPipe()
+				if err != nil {
+					log.Printf("serve: %v", err)
+					r.Close()
+					continue
+				}
+				if err := cmd.Start(); err != nil {
+					log.Printf("serve: %v", err)
+					r.Close()
+					continue
+				}
+				io.Copy(r, stdout)
+				r.Close()
+				if err := cmd.Wait(); err != nil {
 					log.Printf("serve: %v", err)
 				}
 			}
