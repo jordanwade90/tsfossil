@@ -2,7 +2,7 @@
 
 
 ## ---------------------------------------------------------------------
-## STAGE 0: Build the tfossil wrapper
+## STAGE 0: Build the tsfossil wrapper
 ## ---------------------------------------------------------------------
 
 FROM golang:alpine AS bld-tsfossil
