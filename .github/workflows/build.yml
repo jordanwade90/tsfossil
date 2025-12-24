@@ -26,5 +26,7 @@ jobs:
       - name: Build and deploy container
         uses: docker/build-push-action@v6
         with:
+          build-args: |
+            FSLVER=version-2.27
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
